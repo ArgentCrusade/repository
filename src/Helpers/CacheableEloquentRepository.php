@@ -3,6 +3,7 @@
 namespace ArgentCrusade\Repository\Helpers;
 
 use ArgentCrusade\Repository\Contracts\Criterias\CriteriaInterface;
+use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
@@ -186,13 +187,13 @@ class CacheableEloquentRepository
      * @param bool     $allowed
      * @param array    $tags
      * @param string   $key
-     * @param int      $duration
+     * @param int      $cacheMinutes
      * @param callable $callback
      * @param array    $args
      *
      * @return mixed
      */
-    public function remember(bool $allowed, array $tags, string $key, int $duration, callable $callback, array $args)
+    public function remember(bool $allowed, array $tags, string $key, int $cacheMinutes, callable $callback, array $args)
     {
         if (!$allowed) {
             return call_user_func_array($callback, $args);
@@ -202,8 +203,10 @@ class CacheableEloquentRepository
 
         $this->cacheKeys->rememberCacheKey($this->getCacheRepository(), $key);
 
+        $expiresAt = Carbon::now()->addMinutes($cacheMinutes);
+
         return $this->applyRepositoryCacheTags($tags)
-            ->remember($key, $duration, function () use ($callback, $args) {
+            ->remember($key, $expiresAt, function () use ($callback, $args) {
                 return call_user_func_array($callback, $args);
             });
     }
