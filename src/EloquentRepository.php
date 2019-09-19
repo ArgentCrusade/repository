@@ -350,6 +350,30 @@ abstract class EloquentRepository extends BaseRepository implements WriteableRep
     }
 
     /**
+     * Load trashed models.
+     *
+     * @return EloquentRepository
+     */
+    public function withTrashed()
+    {
+        $this->getBuilder()->withTrashed();
+
+        return $this;
+    }
+
+    /**
+     * Load only trashed models.
+     *
+     * @return EloquentRepository
+     */
+    public function onlyTrashed()
+    {
+        $this->getBuilder()->onlyTrashed();
+
+        return $this;
+    }
+
+    /**
      * Apply relation condition.
      *
      * @param string   $relation
