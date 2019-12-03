@@ -176,7 +176,6 @@ class CacheableEloquentRepository
 
             return [
                 'hash' => md5((string) $reflection),
-                'properties' => $reflection->getProperties(),
             ];
         }
     }
