@@ -23,7 +23,7 @@ class CacheableEloquentRepositoryTest extends TestCase
 
         $this->assertSame(
             $repository->generateCacheKey($firstStack, 'example'),
-            $repository->generateCacheKey($secondStack, 'example'),
+            $repository->generateCacheKey($secondStack, 'example')
         );
     }
 
@@ -37,7 +37,7 @@ class CacheableEloquentRepositoryTest extends TestCase
 
         $this->assertNotSame(
             $repository->generateCacheKey($firstStack, 'example'),
-            $repository->generateCacheKey($secondStack, 'example'),
+            $repository->generateCacheKey($secondStack, 'example')
         );
     }
 
