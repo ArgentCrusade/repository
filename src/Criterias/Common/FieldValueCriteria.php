@@ -2,19 +2,15 @@
 
 namespace ArgentCrusade\Repository\Criterias\Common;
 
-use ArgentCrusade\Repository\Contracts\Criterias\CriteriaInterface;
+use ArgentCrusade\Repository\Contracts\Criterias\CacheableCriteriaInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class FieldValueCriteria implements CriteriaInterface
+class FieldValueCriteria implements CacheableCriteriaInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $field;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $ids;
 
     /**
@@ -26,11 +22,19 @@ class FieldValueCriteria implements CriteriaInterface
     public function __construct(string $field, $ids)
     {
         $this->field = $field;
-        $this->ids = collect($ids)
-            ->reject(function ($id) {
-                return empty($id);
-            })
-            ->toArray();
+        $this->ids = array_filter(is_array($ids) ? $ids : [$ids], function ($item) {
+            return !empty($item);
+        });
+    }
+
+    /**
+     * Get cache hash for the current criteria.
+     *
+     * @return array
+     */
+    public function getCacheHash(): string
+    {
+        return md5($this->field.'-'.implode(',', $this->ids));
     }
 
     /**

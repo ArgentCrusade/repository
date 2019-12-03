@@ -2,7 +2,7 @@
 
 namespace ArgentCrusade\Repository\Helpers;
 
-use ArgentCrusade\Repository\Contracts\Criterias\CriteriaInterface;
+use ArgentCrusade\Repository\Contracts\Criterias\CacheableCriteriaInterface;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Container\Container;
@@ -124,7 +124,7 @@ class CacheableEloquentRepository
     public function generateCacheKey(Collection $criteria, string $method, array $args = [])
     {
         $serializedArgs = serialize($args);
-        $serializedCriteria = $this->serializeCriteriaStack($criteria);
+        $serializedCriteria = $this->serializeCriteriaStack($criteria)->implode(';');
 
         $request = $this->container->make(Request::class);
 
@@ -141,43 +141,13 @@ class CacheableEloquentRepository
      *
      * @param Collection $criteria
      *
-     * @return string
+     * @return Collection
      */
     private function serializeCriteriaStack(Collection $criteria)
     {
-        try {
-            return serialize($criteria);
-        } catch (\Throwable $e) {
-            return serialize($criteria->map(function (CriteriaInterface $criteria) {
-                return $this->serializeCriteria($criteria);
-            }));
-        }
-    }
-
-    /**
-     * Serialize given criteria.
-     *
-     * @param CriteriaInterface $criteria
-     *
-     * @return CriteriaInterface|array
-     */
-    private function serializeCriteria(CriteriaInterface $criteria)
-    {
-        try {
-            serialize($criteria);
-
-            return $criteria;
-        } catch (\Throwable $e) {
-            if ($e->getMessage() !== 'Serialization of \'Closure\' is not allowed') {
-                throw $e;
-            }
-
-            $reflection = new \ReflectionObject($criteria);
-
-            return [
-                'hash' => md5((string) $reflection),
-            ];
-        }
+        return $criteria->map(function (CacheableCriteriaInterface $criteria) {
+            return $criteria->getCacheHash();
+        });
     }
 
     /**

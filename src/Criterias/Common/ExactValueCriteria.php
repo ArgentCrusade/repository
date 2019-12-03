@@ -2,9 +2,9 @@
 
 namespace ArgentCrusade\Repository\Criterias\Common;
 
-use ArgentCrusade\Repository\Contracts\Criterias\CriteriaInterface;
+use ArgentCrusade\Repository\Contracts\Criterias\CacheableCriteriaInterface;
 
-class ExactValueCriteria implements CriteriaInterface
+class ExactValueCriteria implements CacheableCriteriaInterface
 {
     /** @var string */
     protected $column;
@@ -16,12 +16,22 @@ class ExactValueCriteria implements CriteriaInterface
      * ExactValueCriteria constructor.
      *
      * @param string $column
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __construct(string $column, $value)
     {
         $this->column = $column;
         $this->value = $value;
+    }
+
+    /**
+     * Get cache hash for the current criteria.
+     *
+     * @return array
+     */
+    public function getCacheHash(): string
+    {
+        return md5($this->column.'-'.$this->value);
     }
 
     /**

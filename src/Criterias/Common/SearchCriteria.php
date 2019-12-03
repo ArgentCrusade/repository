@@ -2,19 +2,15 @@
 
 namespace ArgentCrusade\Repository\Criterias\Common;
 
-use ArgentCrusade\Repository\Contracts\Criterias\CriteriaInterface;
+use ArgentCrusade\Repository\Contracts\Criterias\CacheableCriteriaInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class SearchCriteria implements CriteriaInterface
+class SearchCriteria implements CacheableCriteriaInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $columns;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $query;
 
     /**
@@ -27,6 +23,16 @@ class SearchCriteria implements CriteriaInterface
     {
         $this->columns = $columns;
         $this->query = $query;
+    }
+
+    /**
+     * Get cache hash for the current criteria.
+     *
+     * @return array
+     */
+    public function getCacheHash(): string
+    {
+        return md5(implode(';', $this->columns).'-'.$this->query);
     }
 
     /**
