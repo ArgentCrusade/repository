@@ -176,6 +176,7 @@ abstract class EloquentRepository extends BaseRepository implements WriteableRep
     {
         return function () {
             $this->resetBuilder();
+            $this->resetCriteria();
         };
     }
 
@@ -572,7 +573,7 @@ abstract class EloquentRepository extends BaseRepository implements WriteableRep
      */
     public function orderBy(string $column, $direction = 'asc')
     {
-        $this->getCriteriaBuilder()->orderBy($column, $direction);
+        $this->getBuilder()->orderBy($column, $direction);
 
         return $this;
     }
