@@ -20,6 +20,8 @@ interface CacheableRepositoryInterface
      */
     public function getCacheRepository();
 
+    public function getCacheableRepository();
+
     /**
      * Get the cache key for the given method & arguments list.
      *

@@ -160,6 +160,11 @@ trait CacheableEloquentRepositoryTrait
         return $this->repository->getCacheRepository();
     }
 
+    public function getCacheableRepository()
+    {
+        return $this->repository;
+    }
+
     /**
      * {@inheritdoc}
      */
