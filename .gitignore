@@ -4,3 +4,4 @@
 .phpunit.result.cache
 .php_cs
 phpunit.xml
+.phpunit.cache
